@@ -1,13 +1,27 @@
-import express, { Express, Request, Response} from "express";
+import express, { Express } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import bodyParser from "body-parser";
+import router from './routes';
 
-const PORT = 8000;
+const PORT = process.env.PORT || 3001;
 
 const app: Express = express();
 
-app.get("/", (req: Request, res: Response) => {
-  return res.send("Hello From express")
-});
+// set security HTTP headers
+app.use(helmet());
 
-app.listen(PORT, ()=> {
-  console.log(`now listening on port ${PORT}`)
-})
+// enable cors
+app.use(cors());
+app.options("*", cors());
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json());
+
+// v1 api routes
+app.use('/api', router);
+
+app.listen(PORT, ()=> console.log('server run in port 3000'))
